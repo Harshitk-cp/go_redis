@@ -5,7 +5,7 @@ type ConnectionContext struct {
 	CurrentDB int
 }
 
-func NewConnectionContext() *ConnectionContext {
+func NewConnection() *ConnectionContext {
 	return &ConnectionContext{
 		DataStore: NewDataStore(16),
 		CurrentDB: 0,

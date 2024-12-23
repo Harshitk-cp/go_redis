@@ -21,7 +21,7 @@ func main() {
 	}
 	defer listener.Close()
 
-	ctx := datastore.NewConnectionContext()
+	ctx := datastore.NewConnection()
 
 	if err := ctx.DataStore.Recover("snapshot.rdb", "appendonly.aof"); err != nil {
 		log.Printf("Error during recovery: %v", err)
@@ -37,14 +37,13 @@ func main() {
 			log.Printf("Connection error: %v", err)
 			continue
 		}
-		go handleConnection(conn)
+		go handleConnection(conn, ctx)
 	}
 
 }
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, ctx *datastore.ConnectionContext) {
 	defer conn.Close()
-	ctx := datastore.NewConnectionContext()
 	for {
 
 		command, err := resp.Parse(conn)

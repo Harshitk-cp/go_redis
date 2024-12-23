@@ -84,7 +84,6 @@ func (s *DataStore) LoadSnapshotBinary(filePath string) error {
 	var keyLen, valueLen int32
 
 	for {
-
 		if err := binary.Read(file, binary.LittleEndian, &dbIndex); err != nil {
 			break
 		}
@@ -108,7 +107,8 @@ func (s *DataStore) LoadSnapshotBinary(filePath string) error {
 		key := string(keyBytes)
 		value := string(valueBytes)
 
-		s.SelectDatabase(int(dbIndex)).Set(key, value)
+		db := s.databases[int(dbIndex)]
+		db.Set(key, value)
 	}
 	return nil
 }
