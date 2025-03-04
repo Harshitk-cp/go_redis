@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -42,13 +43,28 @@ func (s *DataStore) LogCommand(command string) {
 
 func (db *Database) SetWithLogging(store *DataStore, key, value string, dbIndex int) {
 	db.Set(key, value)
-	// store.NotifyKeyChange()
 	command := fmt.Sprintf("SET %d %s %s", dbIndex, key, value)
+	store.LogCommand(command)
+}
+
+func (db *Database) LPushWithLogging(store *DataStore, key string, values []string, dbIndex int) {
+	db.LPush(key, values)
+	command := fmt.Sprintf("LPUSH %d %s %s", dbIndex, key, values)
+	store.LogCommand(command)
+}
+
+func (db *Database) RPushWithLogging(store *DataStore, key string, values []string, dbIndex int) {
+	db.RPush(key, values)
+	command := fmt.Sprintf("RPUSH %d %s %s", dbIndex, key, values)
 	store.LogCommand(command)
 }
 
 func (s *DataStore) WriteAOF() {
 	for command := range s.aofLog {
+		parts := strings.SplitN(command, " ", 3)
+		if len(parts) > 2 {
+			command = fmt.Sprintf("%s %s", parts[0], parts[2])
+		}
 		err := s.aof.Write(command)
 		if err != nil {
 			log.Printf("Error writing AOF command: %v", err)

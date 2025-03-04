@@ -54,7 +54,7 @@ func handleGet(command []string, conn io.Writer, ctx *datastore.ConnectionContex
 		return
 	}
 
-	resp.EncodeBulkString(conn, value.(string))
+	resp.EncodeBulkString(conn, value)
 }
 
 func handleDel(command []string, conn io.Writer, ctx *datastore.ConnectionContext) {
