@@ -73,6 +73,8 @@ func execute(command []string, conn io.Writer, ctx *datastore.ConnectionContext)
 
 	case "SET", "GET", "DEL":
 		commands.HandleStringCommands(command, conn, ctx)
+	case "LPUSH", "RPUSH", "LPOP", "RPOP", "LRANGE":
+		commands.HandleListCommands(command, conn, ctx)
 	case "SELECT":
 		handleSelect(command, conn, ctx)
 	case "SAVE":
